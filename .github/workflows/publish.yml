@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to publish (leave empty to use package.json version)'
+        description: "Version to publish (leave empty to use package.json version)"
         required: false
         type: string
 
@@ -24,8 +24,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: npm ci
@@ -50,7 +50,7 @@ jobs:
           echo "Publishing version: $PACKAGE_VERSION"
 
       - name: Publish to npm (using Trusted Publishing)
-        run: npm publish --provenance --access public
+        run: NODE_AUTH_TOKEN="" npm publish --provenance --access public
 
       - name: Create GitHub Release Summary
         run: |
