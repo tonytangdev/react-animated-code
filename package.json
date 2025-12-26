@@ -40,7 +40,7 @@
   "bugs": {
     "url": "https://github.com/tonytangdev/react-animated-code/issues"
   },
-  "homepage": "https://github.com/tonytangdev/react-animated-code#readme",
+  "homepage": "https://tonytangdev.github.io/react-animated-code/",
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
