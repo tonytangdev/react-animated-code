@@ -25,7 +25,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          registry-url: "https://registry.npmjs.org"
+          # Note: registry-url is NOT set for OIDC/Trusted Publishing
+          # Setting registry-url creates token-based auth which blocks OIDC
 
       - name: Install dependencies
         run: npm ci
@@ -82,7 +83,7 @@ jobs:
         run: |
           echo "=== Publishing with verbose logging ==="
           echo "Attempting to publish with OIDC authentication..."
-          NODE_AUTH_TOKEN="" npm publish --provenance --access public --loglevel silly 2>&1 | tee publish.log || {
+          npm publish --provenance --access public --loglevel silly 2>&1 | tee publish.log || {
             echo "=== Publish failed, showing relevant logs ==="
             grep -i "auth\|token\|oidc\|publish" publish.log || cat publish.log
             exit 1
