@@ -49,8 +49,44 @@ jobs:
           echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           echo "Publishing version: $PACKAGE_VERSION"
 
+      - name: Debug - Check OIDC environment
+        run: |
+          echo "=== OIDC Environment Check ==="
+          echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN exists: $([[ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]] && echo "YES (length: ${#ACTIONS_ID_TOKEN_REQUEST_TOKEN})" || echo "NO")"
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL: ${ACTIONS_ID_TOKEN_REQUEST_URL:-not set}"
+          echo "NPM_CONFIG_REGISTRY: ${NPM_CONFIG_REGISTRY:-not set}"
+          echo "NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:-not set}"
+          echo ""
+          echo "=== npm Configuration ==="
+          npm config list
+          echo ""
+          echo "=== GitHub Actions Context ==="
+          echo "Repository: ${{ github.repository }}"
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run ID: ${{ github.run_id }}"
+
+      - name: Debug - npm authentication check
+        run: |
+          echo "=== Checking npm authentication ==="
+          if [ -f ~/.npmrc ]; then
+            echo "~/.npmrc exists - Contents (tokens masked):"
+            cat ~/.npmrc | sed 's/authToken=.*/authToken=***MASKED***/g' | sed 's/_auth=.*/_auth=***MASKED***/g' | sed 's/:_authToken=.*/:_authToken=***MASKED***/g'
+          else
+            echo "~/.npmrc does not exist"
+          fi
+          echo ""
+          echo "=== npm whoami test ==="
+          npm whoami 2>&1 || echo "Not authenticated with token (this is expected for OIDC)"
+
       - name: Publish to npm (using Trusted Publishing)
-        run: NODE_AUTH_TOKEN="" npm publish --provenance --access public
+        run: |
+          echo "=== Publishing with verbose logging ==="
+          echo "Attempting to publish with OIDC authentication..."
+          NODE_AUTH_TOKEN="" npm publish --provenance --access public --loglevel silly 2>&1 | tee publish.log || {
+            echo "=== Publish failed, showing relevant logs ==="
+            grep -i "auth\|token\|oidc\|publish" publish.log || cat publish.log
+            exit 1
+          }
 
       - name: Create GitHub Release Summary
         run: |
