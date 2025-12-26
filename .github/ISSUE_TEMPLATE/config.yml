@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Question or Discussion
+    url: https://github.com/tonytangdev/react-animated-code/discussions
+    about: Ask questions or discuss ideas with the community
+  - name: 📚 Documentation
+    url: https://github.com/tonytangdev/react-animated-code#readme
+    about: Read the documentation for usage examples and API reference
+  - name: 🎓 Shiki Documentation
+    url: https://shiki.style
+    about: Learn more about Shiki themes and languages
