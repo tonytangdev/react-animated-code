@@ -1,0 +1,7 @@
+lib/
+tsconfig.json
+vite.config.ts
+.git
+.gitignore
+node_modules/
+*.log
