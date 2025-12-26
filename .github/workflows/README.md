@@ -43,39 +43,45 @@ This directory contains automated workflows for the React Animated Code project.
 
 ## Setup Instructions
 
-### Setting up npm Publishing
+### Setting up npm Publishing with Trusted Publishers (OIDC)
+
+This project uses **npm Trusted Publishers** (also called Provenance), which is more secure than using npm tokens. No secrets needed!
 
 1. **Create an npm Account**
    - Go to [npmjs.com](https://www.npmjs.com) and create an account
    - Verify your email address
 
-2. **Generate an npm Access Token**
+2. **Configure Trusted Publishing on npm**
    - Log in to npm
-   - Click on your profile picture → "Access Tokens"
-   - Click "Generate New Token" → "Classic Token"
-   - Select type: **Automation** (recommended for CI/CD)
-   - Copy the token (you won't be able to see it again!)
+   - Go to your package page (or create it with first manual publish)
+   - Navigate to: Settings → Publishing Access
+   - Click "Add Provider"
+   - Select **GitHub Actions**
+   - Fill in:
+     - **GitHub Account**: `tonytangdev`
+     - **Repository**: `react-animated-code`
+     - **Workflow**: `publish.yml`
+     - **Environment**: Leave blank (unless using environments)
+   - Click "Add"
 
-3. **Add Token to GitHub Secrets**
-   - Go to your GitHub repository
-   - Navigate to: Settings → Secrets and variables → Actions
-   - Click "New repository secret"
-   - Name: `NPM_TOKEN`
-   - Value: Paste your npm token
-   - Click "Add secret"
-
-4. **Configure package.json**
+3. **Configure package.json**
 
    Ensure your `package.json` has:
    ```json
    {
      "name": "react-animated-code",
      "version": "0.1.0",
+     "repository": {
+       "type": "git",
+       "url": "git+https://github.com/tonytangdev/react-animated-code.git"
+     },
      "publishConfig": {
        "access": "public"
      }
    }
    ```
+
+**That's it!** No npm tokens needed. GitHub Actions will authenticate automatically using OIDC.
 
 ---
 
@@ -174,15 +180,19 @@ Follow [Semantic Versioning](https://semver.org/):
 - Are all dependencies in `package.json`?
 - Are dev dependencies listed under `devDependencies`?
 
-### Publish Fails - "401 Unauthorized"
+### Publish Fails - "401 Unauthorized" or "403 Forbidden"
 
 **Causes:**
-- npm token not set or expired
-- Token doesn't have publish permissions
+- Trusted Publisher not configured on npm
+- Wrong repository/workflow name in npm settings
+- Package doesn't exist yet (first publish must be manual)
 
 **Fix:**
-1. Generate a new npm token
-2. Update `NPM_TOKEN` secret in GitHub
+1. Go to npm package settings → Publishing Access
+2. Verify GitHub Actions provider is configured correctly
+3. Check repository name matches exactly: `tonytangdev/react-animated-code`
+4. Check workflow name matches: `publish.yml`
+5. For first publish, do it manually: `npm publish` (after logging in locally)
 
 ### Publish Fails - "Package already exists"
 
