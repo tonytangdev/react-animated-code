@@ -1,6 +1,6 @@
 {
   "name": "react-animated-code",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "A React component for beautifully animated code transitions using Shiki Magic Move",
   "type": "module",
   "main": "./dist/react-animated-code.umd.cjs",
