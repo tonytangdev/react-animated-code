@@ -35,6 +35,9 @@ export interface AnimatedCodeProps {
 
   // Initial state
   initialIndex?: number;
+
+  // Controlled mode - when provided, component uses this instead of internal state
+  currentIndex?: number;
 }
 
 // Global singleton highlighter cache
@@ -118,6 +121,7 @@ export default function AnimatedCode({
   autoPlayInterval = 3000,
   autoPlayLoop = true,
   initialIndex = 0,
+  currentIndex: controlledIndex,
 }: AnimatedCodeProps) {
   // Normalize input to CodeItem[] array
   const normalizedCodes = useMemo(() => {
@@ -128,12 +132,18 @@ export default function AnimatedCode({
 
   const totalCount = normalizedCodes.length;
 
-  // State management
-  const [currentIndex, setCurrentIndex] = useState(() => {
+  // State management - support both controlled and uncontrolled modes
+  const [internalIndex, setInternalIndex] = useState(() => {
     // Clamp initialIndex to valid range
     return Math.max(0, Math.min(initialIndex, totalCount - 1));
   });
   const [isPlaying, setIsPlaying] = useState(autoPlay);
+
+  // Use controlled index if provided, otherwise use internal state
+  const isControlled = controlledIndex !== undefined;
+  const currentIndex = isControlled
+    ? Math.max(0, Math.min(controlledIndex, totalCount - 1))
+    : internalIndex;
 
   const currentItem = normalizedCodes[currentIndex] || normalizedCodes[0];
   const currentCode = currentItem?.code || '';
@@ -149,22 +159,26 @@ export default function AnimatedCode({
   const handleNext = useCallback(() => {
     const nextIndex = currentIndex + 1;
     if (nextIndex < totalCount) {
-      setCurrentIndex(nextIndex);
+      if (!isControlled) {
+        setInternalIndex(nextIndex);
+      }
       setIsPlaying(false);
       onChange?.(nextIndex);
       onNext?.();
     }
-  }, [currentIndex, totalCount, onChange, onNext]);
+  }, [currentIndex, totalCount, onChange, onNext, isControlled]);
 
   const handlePrev = useCallback(() => {
     const prevIndex = currentIndex - 1;
     if (prevIndex >= 0) {
-      setCurrentIndex(prevIndex);
+      if (!isControlled) {
+        setInternalIndex(prevIndex);
+      }
       setIsPlaying(false);
       onChange?.(prevIndex);
       onPrev?.();
     }
-  }, [currentIndex, onChange, onPrev]);
+  }, [currentIndex, onChange, onPrev, isControlled]);
 
   const togglePlayPause = useCallback(() => {
     setIsPlaying(prev => !prev);
@@ -190,23 +204,38 @@ export default function AnimatedCode({
     if (!autoPlay || !isPlaying || totalCount <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex(prev => {
-        const next = prev + 1;
+      if (isControlled) {
+        // In controlled mode, just call onChange and let parent handle it
+        const next = currentIndex + 1;
         if (next >= totalCount) {
           if (autoPlayLoop) {
             onChange?.(0);
-            return 0;
+          } else {
+            setIsPlaying(false);
           }
-          setIsPlaying(false);
-          return prev;
+        } else {
+          onChange?.(next);
         }
-        onChange?.(next);
-        return next;
-      });
+      } else {
+        // In uncontrolled mode, manage state internally
+        setInternalIndex(prev => {
+          const next = prev + 1;
+          if (next >= totalCount) {
+            if (autoPlayLoop) {
+              onChange?.(0);
+              return 0;
+            }
+            setIsPlaying(false);
+            return prev;
+          }
+          onChange?.(next);
+          return next;
+        });
+      }
     }, autoPlayInterval);
 
     return () => clearInterval(timer);
-  }, [autoPlay, isPlaying, totalCount, autoPlayInterval, autoPlayLoop, onChange]);
+  }, [autoPlay, isPlaying, totalCount, autoPlayInterval, autoPlayLoop, onChange, isControlled, currentIndex]);
 
   // Show header if we have filename or navigation controls
   const shouldShowHeader = (showFilename && currentFilename) || (showControls && totalCount > 1);
