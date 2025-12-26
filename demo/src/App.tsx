@@ -1,21 +1,24 @@
-import { useState } from 'react'
-import { AnimatedCode } from 'react-animated-code'
-import './App.css'
+import { useState } from "react";
+import { AnimatedCode } from "react-animated-code";
+import "./App.css";
 
 function App() {
-  const [customControlIndex, setCustomControlIndex] = useState(0)
+  const [customControlIndex, setCustomControlIndex] = useState(0);
 
   const basicExample = [
     "const greeting = 'Hello';",
     "const greeting = 'Hello World!';",
     "const greeting = 'Hello Universe!';",
-  ]
+  ];
 
   const filenameExample = [
     { code: "import React from 'react';", filename: "App.tsx" },
     { code: "import React, { useState } from 'react';", filename: "App.tsx" },
-    { code: "import React, { useState, useEffect } from 'react';", filename: "App.tsx" },
-  ]
+    {
+      code: "import React, { useState, useEffect } from 'react';",
+      filename: "App.tsx",
+    },
+  ];
 
   const reactExample = [
     {
@@ -26,7 +29,7 @@ function App() {
     </div>
   );
 }`,
-      filename: "Counter.tsx"
+      filename: "Counter.tsx",
     },
     {
       code: `function Counter() {
@@ -38,7 +41,7 @@ function App() {
     </div>
   );
 }`,
-      filename: "Counter.tsx"
+      filename: "Counter.tsx",
     },
     {
       code: `function Counter() {
@@ -53,38 +56,42 @@ function App() {
     </div>
   );
 }`,
-      filename: "Counter.tsx"
+      filename: "Counter.tsx",
     },
-  ]
+  ];
 
   const pythonExample = [
     {
       code: "def greet():\n    print('Hello')",
-      filename: "greet.py"
+      filename: "greet.py",
     },
     {
       code: "def greet(name):\n    print(f'Hello {name}')",
-      filename: "greet.py"
+      filename: "greet.py",
     },
     {
       code: "def greet(name='World'):\n    print(f'Hello {name}!')\n    return f'Hello {name}!'",
-      filename: "greet.py"
+      filename: "greet.py",
     },
-  ]
+  ];
 
   const customControlSteps = [
     "function greet() {\n  console.log('Hello');\n}",
     "function greet(name) {\n  console.log(`Hello ${name}`);\n}",
     "function greet(name = 'World') {\n  console.log(`Hello ${name}!`);\n}",
     "function greet(name = 'World') {\n  const message = `Hello ${name}!`;\n  console.log(message);\n  return message;\n}",
-  ]
+  ];
 
   return (
     <div className="app">
       <header className="header">
         <h1>React Animated Code</h1>
         <p>Beautiful code transitions with smooth, Fireship-style animations</p>
-        <a href="https://github.com/tonytangdev/react-animated-code" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://github.com/tonytangdev/react-animated-code"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           View on GitHub
         </a>
       </header>
@@ -105,11 +112,7 @@ function App() {
         <section className="demo-section">
           <h2>React Component Evolution</h2>
           <p>Watch a React component grow step by step</p>
-          <AnimatedCode
-            code={reactExample}
-            lang="tsx"
-            theme="github-dark"
-          />
+          <AnimatedCode code={reactExample} lang="tsx" theme="github-dark" />
         </section>
 
         <section className="demo-section">
@@ -126,28 +129,25 @@ function App() {
         <section className="demo-section">
           <h2>Without Line Numbers</h2>
           <p>Clean code display without line numbers</p>
-          <AnimatedCode
-            code={basicExample}
-            lineNumbers={false}
-          />
+          <AnimatedCode code={basicExample} lineNumbers={false} />
         </section>
 
         <section className="demo-section">
           <h2>Nord Theme</h2>
           <p>Beautiful Nord color scheme</p>
-          <AnimatedCode
-            code={reactExample}
-            lang="tsx"
-            theme="nord"
-          />
+          <AnimatedCode code={reactExample} lang="tsx" theme="nord" />
         </section>
 
         <section className="demo-section">
           <h2>Custom Controls</h2>
-          <p>Build your own navigation UI using controlled mode with currentIndex</p>
+          <p>
+            Build your own navigation UI using controlled mode with currentIndex
+          </p>
           <div className="custom-controls">
             <button
-              onClick={() => setCustomControlIndex(prev => Math.max(0, prev - 1))}
+              onClick={() =>
+                setCustomControlIndex((prev) => Math.max(0, prev - 1))
+              }
               disabled={customControlIndex === 0}
             >
               ← Previous
@@ -156,7 +156,11 @@ function App() {
               Step {customControlIndex + 1} of {customControlSteps.length}
             </span>
             <button
-              onClick={() => setCustomControlIndex(prev => Math.min(customControlSteps.length - 1, prev + 1))}
+              onClick={() =>
+                setCustomControlIndex((prev) =>
+                  Math.min(customControlSteps.length - 1, prev + 1),
+                )
+              }
               disabled={customControlIndex === customControlSteps.length - 1}
             >
               Next →
@@ -172,7 +176,7 @@ function App() {
 
         <section className="demo-section">
           <h2>Auto-Play Mode</h2>
-          <p>Automatically cycle through code snippets (placed last to avoid page height changes)</p>
+          <p>Automatically cycle through code snippets</p>
           <AnimatedCode
             code={reactExample}
             lang="tsx"
@@ -188,7 +192,7 @@ function App() {
         <p>Powered by Shiki Magic Move</p>
       </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
