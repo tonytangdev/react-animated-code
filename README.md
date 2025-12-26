@@ -2,6 +2,8 @@
 
 A beautiful React component for animating code transitions with smooth, Fireship-style animations powered by [Shiki Magic Move](https://github.com/shikijs/shiki-magic-move). Perfect for presentations, tutorials, and interactive code demonstrations.
 
+## [🚀 Live Demo](https://tonytangdev.github.io/react-animated-code/)
+
 ## Features
 
 ✨ **Smooth Animations** - Beautiful transitions between code states
